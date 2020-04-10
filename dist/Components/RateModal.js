@@ -27,9 +27,9 @@ class RateModal extends react_1.Component {
     render() {
         const { onClosed, isTransparent } = this.props;
         const { isModalOpen } = this.state;
-        return (react_1.default.createElement(react_native_1.Modal, { transparent: isTransparent, visible: isModalOpen, onRequestClose: () => onClosed }, this.renderRateModal()));
+        return (react_1.default.createElement(react_native_1.Modal, { transparent: isTransparent, visible: isModalOpen, onRequestClose: () => onClosed() }, this.renderRateModal()));
     }
-    componentWillMount() {
+    componentDidMount() {
         const { OS } = react_native_1.Platform;
         const { totalStarCount, isVisible, starLabels, playStoreUrl, iTunesStoreUrl } = this.props;
         if (isVisible && starLabels.length !== totalStarCount) {
@@ -42,10 +42,10 @@ class RateModal extends react_1.Component {
             throw new Error('Enter a valid store url');
         }
     }
-    componentWillReceiveProps(nextProps) {
-        if (this.props.isModalOpen !== nextProps.isModalOpen) {
+    componentDidUpdate(prevProps) {
+        if (prevProps.isModalOpen !== this.props.isModalOpen) {
             this.setState({
-                isModalOpen: nextProps.isModalOpen,
+                isModalOpen: this.props.isModalOpen,
             });
         }
     }
@@ -105,6 +105,7 @@ class RateModal extends react_1.Component {
             react_native_1.Platform.OS === 'ios' ?
                 react_native_1.Linking.openURL(iTunesStoreUrl) :
                 react_native_1.Linking.openURL(playStoreUrl);
+            this.setState({ isModalOpen: false });
         }
         else {
             this.setState({ showContactForm: true });
@@ -114,7 +115,13 @@ class RateModal extends react_1.Component {
         const { sendContactUsForm } = this.props;
         if (this.state.review.length > 0) {
             if (sendContactUsForm && typeof sendContactUsForm === 'function') {
-                return sendContactUsForm({ ...this.state });
+                this.setState({ showContactForm: false });
+                let copyState = this.state;
+                this.setState({
+                    review: '',
+                    reviewError: false
+                });
+                return sendContactUsForm({ ...copyState });
             }
             throw new Error('You should generate sendContactUsForm function');
         }

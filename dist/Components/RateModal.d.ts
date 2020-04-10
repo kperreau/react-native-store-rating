@@ -18,8 +18,8 @@ export declare class RateModal extends Component<IProps, IState> {
     };
     constructor(props: IProps);
     render(): JSX.Element;
-    componentWillMount(): void;
-    componentWillReceiveProps(nextProps: any): void;
+    componentDidMount(): void;
+    componentDidUpdate(prevProps: any): void;
     private onStarSelected;
     private renderRateModal;
     private renderRatingView;
